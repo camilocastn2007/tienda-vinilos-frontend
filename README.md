@@ -72,8 +72,8 @@ El frontend estará disponible inmediatamente en **`http://localhost:3000`**.
 
 | Rol | Correo Electrónico | Contraseña |
 |---|---|---|
-| **Administrador** | `admin@vinilosmilo.com` | `admin123` |
-| **Cliente / Usuario** | `user@vinilosmilo.com` | `user123` |
+| **Administrador** | `admin@vinilosmilo.com` | `Admin123*` |
+| **Cliente / Usuario** | `user@vinilosmilo.com` | `User123*` |
 
 También puedes registrarte con una cuenta nueva desde `/registro`.
 
