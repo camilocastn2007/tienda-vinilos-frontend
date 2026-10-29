@@ -1,60 +1,100 @@
-# VinilosMilo Frontend
+﻿# 🎵 VinilosMilo - Tienda de Vinilos y Música Física
 
-Este es el **frontend** de la tienda de vinilos VinilosMilo, construido con **Next.js 13+**, **TypeScript** y **Tailwind CSS**. Utiliza la API del backend para autenticar usuarios, mostrar el catálogo y gestionar pedidos.
-
-## Scripts
-
-```bash
-npm run dev   # Ejecuta el servidor de desarrollo en http://localhost:3000
-npm run build # Genera una versión optimizada para producción
-npm start     # Inicia la aplicación en modo producción
-```
-
-## Variables de entorno
-
-Crea un archivo `.env.local` en la raíz del proyecto con al menos la siguiente variable:
-
-```
-NEXT_PUBLIC_API_HOST=http://localhost:4000   # URL del backend
-```
-
-## Autenticación
-
-- **Login**: `/login`
-- **Registro**: `/registro`
-- El token JWT se guarda en `localStorage` bajo la clave `vinilos_token` y la información del usuario bajo `vinilos_user`.
-- El `Navbar` escucha el evento `auth‑change` para actualizar su estado.
-
-## Catálogo
-
-- Ruta: `/catalogo`
-- Permite filtrar por título/artista, género y rango de precio.
-- Paginación configurable (10 ítems por página).
-- Cada disco muestra su portada, título, artista, género y precio.
-- Botón **Agregar al carrito** crea un pedido mediante `POST /api/pedidos`.
-
-## Panel de Administración (Admin)
-
-- Ruta: `/admin`
-- Acceso restringido a usuarios con rol `admin`.
-- **CRUD de discos**: crear, editar y eliminar discos del catálogo.
-- **Listado de pedidos**: tabla con usuario, disco, cantidad, estado y fecha.
-- Todas las llamadas a la API usan el cliente centralizado `apiFetch` que inyecta el JWT y gestiona automáticamente redirecciones a `/login` en caso de 401.
-- El panel incluye confirmación antes de eliminar un disco.
-
-## README técnico adicional
-
-- El backend y el frontend comparten la misma paleta de colores de VinilosMilo (`#d35400`, `#2c3e50`, `#f9f9f9`).
-- Credenciales de prueba (configuradas en el seed del backend):
-  - **Admin**: `admin@vinilosmilo.com` / `Admin123*`
-  - **Usuario**: `user@vinilosmilo.com` / `User123*`
-- Para ejecutar la aplicación completa, sigue los pasos del `README.md` en el repositorio del **backend** y luego:
-  ```bash
-  cd frontend
-  npm install
-  npm run dev
-  ```
+Plataforma web de comercio electrónico especializada en música en formatos físicos (vinilos y CDs), construida con arquitectura moderna desacoplada: **Next.js 15 (Frontend)** y **Node.js / Express con TypeScript y Prisma ORM (Backend)** sobre **PostgreSQL**.
 
 ---
 
-> **Importante**: cualquier cambio futuro en la API (nuevos endpoints, cambios en la estructura de datos) deberá actualizarse también en este README y en los componentes que consumen la API.
+## 🚀 Requisitos Previos
+
+- [Node.js](https://nodejs.org/) (versión 18 o superior)
+- [Docker Desktop](https://www.docker.com/products/docker-desktop/) (recomendado para la base de datos) o PostgreSQL instalado localmente.
+- [Git](https://git-scm.com/)
+
+---
+
+## 📦 Puesta en Marcha Rápida (Paso a Paso)
+
+### 1. Iniciar la Base de Datos con Docker (Recomendado)
+
+Abre Docker Desktop y corre este comando en tu terminal para crear e iniciar el contenedor de PostgreSQL:
+
+```bash
+docker run --name vinilosmilo-db -e POSTGRES_USER=postgres -e POSTGRES_PASSWORD=postgres -e POSTGRES_DB=vinilosmilo -p 5432:5432 -d postgres:16
+```
+
+> **Nota si usas PostgreSQL local sin Docker:** Asegúrate de tener PostgreSQL corriendo en el puerto 5432 con usuario `postgres`, contraseña `postgres` y una base de datos llamada `vinilosmilo`.
+
+---
+
+### 2. Configurar y Levantar el Backend
+
+En una terminal:
+
+```bash
+cd backend
+
+# Instalar dependencias
+npm install
+
+# Generar cliente de Prisma y aplicar migraciones
+npx prisma db push
+
+# Poblar la base de datos con los 26 discos iniciales y usuarios de prueba
+npm run prisma:seed
+
+# Iniciar el servidor backend en modo desarrollo
+npm run dev
+```
+
+El backend se iniciará en **`http://localhost:4000`** con endpoints disponibles bajo `/api`.
+
+---
+
+### 3. Configurar y Levantar el Frontend
+
+En otra terminal separada:
+
+```bash
+cd frontend
+
+# Instalar dependencias
+npm install
+
+# Iniciar el servidor Next.js
+npm run dev
+```
+
+El frontend estará disponible inmediatamente en **`http://localhost:3000`**.
+
+---
+
+## 🔑 Cuentas de Prueba Preconfiguradas (Seed)
+
+| Rol | Correo Electrónico | Contraseña |
+|---|---|---|
+| **Administrador** | `admin@vinilosmilo.com` | `admin123` |
+| **Cliente / Usuario** | `user@vinilosmilo.com` | `user123` |
+
+También puedes registrarte con una cuenta nueva desde `/registro`.
+
+---
+
+## 🌐 Estructura del Proyecto
+
+```text
+TiendaVinilos/
+├── backend/                  # API REST en 4 capas (TypeScript, Express, Prisma)
+│   ├── prisma/               # Schema y seed de discos
+│   └── src/
+│       ├── domain/           # Entidades del dominio
+│       ├── application/      # Casos de uso
+│       ├── infrastructure/   # Repositorios Prisma y base de datos
+│       └── interface/        # Controladores y rutas HTTP
+├── frontend/                 # Aplicación Next.js 15 (App Router, Tailwind CSS)
+│   ├── public/               # Portadas de discos y recursos estáticos
+│   └── src/
+│       ├── app/              # Páginas (Inicio, Catálogo, Login, Registro)
+│       ├── features/         # Componentes Navbar, Footer, etc.
+│       └── lib/              # Cliente HTTP para llamadas API
+└── README.md                 # Guía general de instalación
+```
