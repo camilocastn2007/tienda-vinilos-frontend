@@ -26,6 +26,8 @@ export default function MisPedidosPage() {
   const [pedidos, setPedidos] = useState<Pedido[]>([]);
   const [cargando, setCargando] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [eliminandoId, setEliminandoId] = useState<string | null>(null);
+  const [mensajeExito, setMensajeExito] = useState<string | null>(null);
 
   useEffect(() => {
     const token = typeof window !== "undefined" ? localStorage.getItem("vinilos_token") : null;
@@ -51,6 +53,27 @@ export default function MisPedidosPage() {
       });
   }, [router]);
 
+  const handleCancelarPedido = async (id: string, titulo: string) => {
+    const confirmar = window.confirm(`¿Estás seguro de que deseas cancelar el pedido de "${titulo}"?`);
+    if (!confirmar) return;
+
+    setEliminandoId(id);
+    try {
+      const apiHost = process.env.NEXT_PUBLIC_API_HOST || "http://localhost:4000";
+      await apiFetch(`${apiHost}/api/pedidos/${id}`, {
+        method: "DELETE",
+      });
+      // Remover del estado local de inmediato
+      setPedidos((prev) => prev.filter((p) => p.id !== id));
+      setMensajeExito(`Pedido de "${titulo}" cancelado correctamente.`);
+      setTimeout(() => setMensajeExito(null), 4000);
+    } catch (err: any) {
+      alert(err.message || "Error al cancelar el pedido.");
+    } finally {
+      setEliminandoId(null);
+    }
+  };
+
   return (
     <div className="min-h-screen bg-[#f9f9f9] py-10 px-4">
       <div className="max-w-5xl mx-auto">
@@ -66,6 +89,12 @@ export default function MisPedidosPage() {
             + Seguir Comprando
           </Link>
         </div>
+
+        {mensajeExito && (
+          <div className="mb-6 p-4 rounded bg-green-100 border border-green-300 text-green-800 font-medium">
+            {mensajeExito}
+          </div>
+        )}
 
         {cargando ? (
           <div className="text-center py-20 text-gray-500">
@@ -141,7 +170,7 @@ export default function MisPedidosPage() {
                       </span>
                     </div>
 
-                    <div>
+                    <div className="flex items-center gap-3">
                       <span
                         className={`inline-block px-3 py-1 rounded-full text-xs font-semibold uppercase tracking-wider ${
                           p.estado === "PENDIENTE"
@@ -153,6 +182,15 @@ export default function MisPedidosPage() {
                       >
                         {p.estado}
                       </span>
+
+                      <button
+                        onClick={() => handleCancelarPedido(p.id, p.disco?.titulo || "disco")}
+                        disabled={eliminandoId === p.id}
+                        className="text-red-500 hover:text-red-700 hover:bg-red-50 border border-red-200 rounded px-3 py-1 text-xs font-semibold transition-colors disabled:opacity-50"
+                        title="Cancelar y eliminar pedido"
+                      >
+                        {eliminandoId === p.id ? "Cancelando..." : "Cancelar"}
+                      </button>
                     </div>
                   </div>
                 </div>
