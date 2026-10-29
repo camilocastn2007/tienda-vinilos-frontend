@@ -1,36 +1,60 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# VinilosMilo Frontend
 
-## Getting Started
+Este es el **frontend** de la tienda de vinilos VinilosMilo, construido con **Next.js 13+**, **TypeScript** y **Tailwind CSS**. Utiliza la API del backend para autenticar usuarios, mostrar el catálogo y gestionar pedidos.
 
-First, run the development server:
+## Scripts
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+npm run dev   # Ejecuta el servidor de desarrollo en http://localhost:3000
+npm run build # Genera una versión optimizada para producción
+npm start     # Inicia la aplicación en modo producción
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## Variables de entorno
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+Crea un archivo `.env.local` en la raíz del proyecto con al menos la siguiente variable:
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+```
+NEXT_PUBLIC_API_HOST=http://localhost:4000   # URL del backend
+```
 
-## Learn More
+## Autenticación
 
-To learn more about Next.js, take a look at the following resources:
+- **Login**: `/login`
+- **Registro**: `/registro`
+- El token JWT se guarda en `localStorage` bajo la clave `vinilos_token` y la información del usuario bajo `vinilos_user`.
+- El `Navbar` escucha el evento `auth‑change` para actualizar su estado.
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## Catálogo
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+- Ruta: `/catalogo`
+- Permite filtrar por título/artista, género y rango de precio.
+- Paginación configurable (10 ítems por página).
+- Cada disco muestra su portada, título, artista, género y precio.
+- Botón **Agregar al carrito** crea un pedido mediante `POST /api/pedidos`.
 
-## Deploy on Vercel
+## Panel de Administración (Admin)
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+- Ruta: `/admin`
+- Acceso restringido a usuarios con rol `admin`.
+- **CRUD de discos**: crear, editar y eliminar discos del catálogo.
+- **Listado de pedidos**: tabla con usuario, disco, cantidad, estado y fecha.
+- Todas las llamadas a la API usan el cliente centralizado `apiFetch` que inyecta el JWT y gestiona automáticamente redirecciones a `/login` en caso de 401.
+- El panel incluye confirmación antes de eliminar un disco.
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+## README técnico adicional
+
+- El backend y el frontend comparten la misma paleta de colores de VinilosMilo (`#d35400`, `#2c3e50`, `#f9f9f9`).
+- Credenciales de prueba (configuradas en el seed del backend):
+  - **Admin**: `admin@vinilosmilo.com` / `Admin123*`
+  - **Usuario**: `user@vinilosmilo.com` / `User123*`
+- Para ejecutar la aplicación completa, sigue los pasos del `README.md` en el repositorio del **backend** y luego:
+  ```bash
+  cd frontend
+  npm install
+  npm run dev
+  ```
+
+---
+
+> **Importante**: cualquier cambio futuro en la API (nuevos endpoints, cambios en la estructura de datos) deberá actualizarse también en este README y en los componentes que consumen la API.
