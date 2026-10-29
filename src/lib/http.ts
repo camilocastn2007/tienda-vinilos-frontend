@@ -10,9 +10,9 @@ export async function apiFetch(
   options: RequestInit = {}
 ): Promise<any> {
   const token = typeof window !== "undefined" ? localStorage.getItem("vinilos_token") : null;
-  const headers: HeadersInit = {
+  const headers: Record<string, string> = {
     "Content-Type": "application/json",
-    ...(options.headers || {}),
+    ...((options.headers as Record<string, string>) || {}),
   };
   if (token) {
     headers["Authorization"] = `Bearer ${token}`;
