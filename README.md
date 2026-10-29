@@ -1,100 +1,52 @@
-﻿# 🎵 VinilosMilo - Tienda de Vinilos y Música Física
+﻿# Frontend - Tienda de Vinilos y CDs (VinilosMilo)
 
-Plataforma web de comercio electrónico especializada en música en formatos físicos (vinilos y CDs), construida con arquitectura moderna desacoplada: **Next.js 15 (Frontend)** y **Node.js / Express con TypeScript y Prisma ORM (Backend)** sobre **PostgreSQL**.
+Aplicación web desarrollada con Next.js 15 (App Router), React y Tailwind CSS para la tienda virtual VinilosMilo. Consume la API REST del backend para mostrar el catálogo de discos, permitir el registro/login de usuarios y gestionar pedidos en tiempo real.
 
----
+## Repositorios del Proyecto
 
-## 🚀 Requisitos Previos
+- Repositorio Frontend: https://github.com/camilocastn2007/tienda-vinilos-frontend
+- Repositorio Backend: https://github.com/camilocastn2007/tienda-vinilos-backend
 
-- [Node.js](https://nodejs.org/) (versión 18 o superior)
-- [Docker Desktop](https://www.docker.com/products/docker-desktop/) (recomendado para la base de datos) o PostgreSQL instalado localmente.
-- [Git](https://git-scm.com/)
+## Tecnologías Utilizadas
 
----
+- Next.js 15 con TypeScript y App Router
+- React 19
+- Tailwind CSS v4 para los estilos
+- Fetch API centralizado con manejo de autenticación JWT
 
-## 📦 Puesta en Marcha Rápida (Paso a Paso)
+## Requisitos
 
-### 1. Iniciar la Base de Datos con Docker (Recomendado)
+- Node.js 18 o superior
+- Tener el backend corriendo en el puerto 4000
 
-Abre Docker Desktop y corre este comando en tu terminal para crear e iniciar el contenedor de PostgreSQL:
+## Pasos para ejecutar el frontend
 
-```bash
-docker run --name vinilosmilo-db -e POSTGRES_USER=postgres -e POSTGRES_PASSWORD=postgres -e POSTGRES_DB=vinilosmilo -p 5432:5432 -d postgres:16
-```
+1. **Instalar dependencias:**
+   ```bash
+   npm install
+   ```
 
-> **Nota si usas PostgreSQL local sin Docker:** Asegúrate de tener PostgreSQL corriendo en el puerto 5432 con usuario `postgres`, contraseña `postgres` y una base de datos llamada `vinilosmilo`.
+2. **Variables de entorno:**
+   Verificar que exista el archivo `.env.local` con la URL del backend:
+   ```env
+   NEXT_PUBLIC_API_HOST=http://localhost:4000
+   ```
 
----
+3. **Iniciar el servidor de desarrollo:**
+   ```bash
+   npm run dev
+   ```
+   La aplicación se abrirá en http://localhost:3000
 
-### 2. Configurar y Levantar el Backend
+## Páginas de la aplicación
 
-En una terminal:
+- `/`: Página principal con presentación de la tienda y discos destacados.
+- `/catalogo`: Catálogo completo con buscador por título/artista, filtro por género y paginación.
+- `/registro`: Formulario para crear una cuenta nueva en la tienda.
+- `/login`: Inicio de sesión para usuarios y administradores.
+- `/mis-pedidos`: Historial de pedidos del usuario autenticado con opción de cancelar pedidos.
 
-```bash
-cd backend
+## Cuentas de prueba
 
-# Instalar dependencias
-npm install
-
-# Generar cliente de Prisma y aplicar migraciones
-npx prisma db push
-
-# Poblar la base de datos con los 26 discos iniciales y usuarios de prueba
-npm run prisma:seed
-
-# Iniciar el servidor backend en modo desarrollo
-npm run dev
-```
-
-El backend se iniciará en **`http://localhost:4000`** con endpoints disponibles bajo `/api`.
-
----
-
-### 3. Configurar y Levantar el Frontend
-
-En otra terminal separada:
-
-```bash
-cd frontend
-
-# Instalar dependencias
-npm install
-
-# Iniciar el servidor Next.js
-npm run dev
-```
-
-El frontend estará disponible inmediatamente en **`http://localhost:3000`**.
-
----
-
-## 🔑 Cuentas de Prueba Preconfiguradas (Seed)
-
-| Rol | Correo Electrónico | Contraseña |
-|---|---|---|
-| **Administrador** | `admin@vinilosmilo.com` | `Admin123*` |
-| **Cliente / Usuario** | `user@vinilosmilo.com` | `User123*` |
-
-También puedes registrarte con una cuenta nueva desde `/registro`.
-
----
-
-## 🌐 Estructura del Proyecto
-
-```text
-TiendaVinilos/
-├── backend/                  # API REST en 4 capas (TypeScript, Express, Prisma)
-│   ├── prisma/               # Schema y seed de discos
-│   └── src/
-│       ├── domain/           # Entidades del dominio
-│       ├── application/      # Casos de uso
-│       ├── infrastructure/   # Repositorios Prisma y base de datos
-│       └── interface/        # Controladores y rutas HTTP
-├── frontend/                 # Aplicación Next.js 15 (App Router, Tailwind CSS)
-│   ├── public/               # Portadas de discos y recursos estáticos
-│   └── src/
-│       ├── app/              # Páginas (Inicio, Catálogo, Login, Registro)
-│       ├── features/         # Componentes Navbar, Footer, etc.
-│       └── lib/              # Cliente HTTP para llamadas API
-└── README.md                 # Guía general de instalación
-```
+- Administrador: `admin@vinilosmilo.com` / `Admin123*`
+- Cliente: `user@vinilosmilo.com` / `User123*`
